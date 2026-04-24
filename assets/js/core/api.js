@@ -1,8 +1,19 @@
 const Api = (() => {
+  const DEFAULT_BASE = (() => {
+    if (typeof window === 'undefined' || !window.location) return 'http://localhost:8080';
+    const proto = window.location.protocol;
+    if (proto === 'file:' || proto === '') return 'http://localhost:8080';
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1' || host === '') {
+      return 'http://localhost:8080';
+    }
+    return window.location.origin;
+  })();
+
   const BASE =
     localStorage.getItem('apiBase') ||
     window.__API_BASE__ ||
-    'http://localhost:8080';
+    DEFAULT_BASE;
 
   async function _request(method, path, body) {
     const token = localStorage.getItem('token');
